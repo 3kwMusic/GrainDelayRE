@@ -126,7 +126,7 @@ def main():
                 "The standalone EXE can be run separately. About / License contains the full notices.\n\n"
                 f"Complete corresponding source: {source_zip.name}\n"
                 f"Publish that source ZIP alongside this binary ZIP at the same download location.\n"
-                f"Source repository: https://github.com/ZakaiMusic/GrainDelayRE/tree/{expected_tag}\n"
+                f"Source repository: https://github.com/3kwMusic/GrainDelayRE/tree/{expected_tag}\n"
                 f"Source commit: {commit}\n"
                 "Offline build instructions are in the source package's docs/RELEASING.md.\n"
             ))

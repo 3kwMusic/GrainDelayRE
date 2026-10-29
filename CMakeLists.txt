@@ -3,14 +3,14 @@
 
 cmake_minimum_required(VERSION 3.22)
 
-project(GrainDelayRE VERSION 1.0.2)
+project(GrainDelayRE VERSION 1.0.3)
 
 include(cmake/JuceDependency.cmake)
 grain_add_juce()
 
 juce_add_plugin(GrainDelayRE
     COMPANY_NAME "TriM"
-    COMPANY_WEBSITE "https://github.com/ZakaiMusic/GrainDelayRE"
+    COMPANY_WEBSITE "https://github.com/3kwMusic/GrainDelayRE"
     BUNDLE_ID "com.yourcompany.GrainDelayRE"
     PLUGIN_MANUFACTURER_CODE ReaD
     PLUGIN_CODE Gdr1

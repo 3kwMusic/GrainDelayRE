@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3
+
+- Update repository, publisher website, About / License source links and release packaging links after the GitHub account rename.
+- Preserve audio processing, parameters, plugin identifiers and host state compatibility from 1.0.2.
+
 ## 1.0.2
 
 - Adopt AGPL-3.0-only for project code and include dependency notices.

@@ -1,8 +1,10 @@
 # Grain Delay RE
 
-基于 JUCE 8.0.4 和 C++17 开发的立体声颗粒延迟插件，提供 VST3 和 Standalone。当前版本：**1.0.2**。
+基于 JUCE 8.0.4 和 C++17 开发的立体声颗粒延迟插件，提供 VST3 和 Standalone。当前版本：**1.0.3**。
 
 支持延迟、颗粒频率、变调、随机变调、Spray、交叉反馈和 Dry/Wet，包含节拍同步、Swing、XY 参数控制和宿主状态保存。
+
+[下载 Windows 插件及完整对应源码](https://github.com/3kwMusic/GrainDelayRE/releases/latest)
 
 ## 构建
 

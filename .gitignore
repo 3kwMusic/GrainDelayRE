@@ -1,0 +1,29 @@
+# Build output and optional dependency checkout
+/build/
+/dist/
+/third_party/
+/.vs/
+/.idea/
+/.vscode/
+CMakeUserPresets.json
+
+# Generated binaries, caches and machine-local files
+*.exe
+*.dll
+*.vst3
+*.obj
+*.lib
+*.exp
+*.pdb
+*.ilk
+*.pyc
+__pycache__/
+Thumbs.db
+.DS_Store
+
+# Local credentials and environment overrides
+.env
+.env.*
+!.env.example
+*.pem
+*.key

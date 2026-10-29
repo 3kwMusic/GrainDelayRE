@@ -1,9 +1,60 @@
+// SPDX-FileCopyrightText: 2026 TriM
+// SPDX-License-Identifier: AGPL-3.0-only
+
 #include "PluginEditor.h"
+#include "GrainDelayLegalData.h"
+
+namespace
+{
+class LegalPanel final : public juce::Component
+{
+public:
+    explicit LegalPanel(std::function<void()> close)
+    {
+        text.setMultiLine(true);
+        text.setReadOnly(true);
+        text.setCaretVisible(false);
+        text.setScrollbarsShown(true);
+        text.setFont(juce::FontOptions(13.0f));
+        juce::String notices;
+        for (const auto* part : GrainDelayLegalData::parts)
+            notices += juce::String::fromUTF8(part);
+        text.setText(notices, false);
+        text.setColour(juce::TextEditor::backgroundColourId, GrainPalette::panel);
+        text.setColour(juce::TextEditor::textColourId, GrainPalette::text);
+        addAndMakeVisible(text);
+        closeButton.onClick = std::move(close);
+        addAndMakeVisible(closeButton);
+    }
+
+    void paint(juce::Graphics& g) override
+    {
+        g.fillAll(GrainPalette::background);
+        g.setColour(GrainPalette::border);
+        g.drawRect(getLocalBounds(), 1);
+    }
+
+    void resized() override
+    {
+        auto area = getLocalBounds().reduced(12);
+        closeButton.setBounds(area.removeFromBottom(28).removeFromRight(90));
+        area.removeFromBottom(8);
+        text.setBounds(area);
+    }
+
+private:
+    juce::TextEditor text;
+    juce::TextButton closeButton { "Close" };
+};
+}
 
 GrainDelayEditor::GrainDelayEditor(GrainDelayProcessor& p)
     : AudioProcessorEditor(&p), processor(p), xyPad(p.apvts)
 {
     setLookAndFeel(&modernLookAndFeel);
+
+    aboutButton.onClick = [this] { showLegalNotices(); };
+    addAndMakeVisible(aboutButton);
 
     delayKnob = &addKnob(Parameters::delayMs, "Delay Time", Parameters::Target::delay);
     swingKnob = &addKnob(Parameters::beatSwing, "Beat Swing", Parameters::Target::none);
@@ -71,6 +122,23 @@ GrainDelayEditor::~GrainDelayEditor()
     processor.setXYGestureActive(true, false);
     processor.setXYGestureActive(false, false);
     setLookAndFeel(nullptr);
+}
+
+void GrainDelayEditor::showLegalNotices()
+{
+    if (legalPanel == nullptr)
+    {
+        legalPanel = std::make_unique<LegalPanel>([this]
+        {
+            legalPanel->setVisible(false);
+            aboutButton.grabKeyboardFocus();
+        });
+        addChildComponent(*legalPanel);
+    }
+
+    legalPanel->setBounds(getLocalBounds().reduced(12));
+    legalPanel->setVisible(true);
+    legalPanel->toFront(true);
 }
 
 juce::Slider& GrainDelayEditor::addKnob(const juce::String& id,
@@ -224,7 +292,7 @@ void GrainDelayEditor::paint(juce::Graphics& g)
 
     g.setColour(GrainPalette::mutedText);
     g.setFont(juce::FontOptions(10.0f));
-    g.drawText("FOUR-TAP GRANULAR DELAY", 450, 22, 286, 18, juce::Justification::right);
+    g.drawText("FOUR-TAP GRANULAR DELAY", 300, 22, 294, 18, juce::Justification::right);
 
     for (const auto& area : { juce::Rectangle<int>(16, 64, 464, 326),
                               juce::Rectangle<int>(496, 64, 248, 326) })
@@ -246,6 +314,9 @@ void GrainDelayEditor::paint(juce::Graphics& g)
 
 void GrainDelayEditor::resized()
 {
+    aboutButton.setBounds(616, 18, 120, 26);
+    if (legalPanel != nullptr)
+        legalPanel->setBounds(getLocalBounds().reduced(12));
     const std::array<int, 8> order { 0, 2, 3, 4, 5, 6, 7, 1 };
     for (size_t i = 0; i < order.size(); ++i)
     {

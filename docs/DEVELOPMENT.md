@@ -3,6 +3,8 @@
 ## 架构
 
 项目采用 JUCE 8.0.4、C++17、CMake 和 Visual Studio 工具链，输出 VST3 与 Standalone。
+发布元数据与打包流程见 `docs/RELEASING.md`。许可文本通过 `cmake/LegalNotices.cmake`
+嵌入界面的 `About / License`；更新许可文件后重新配置和构建。
 
 | 文件 | 职责 |
 | --- | --- |

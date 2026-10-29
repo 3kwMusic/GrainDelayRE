@@ -1,11 +1,17 @@
+# SPDX-FileCopyrightText: 2026 TriM
+# SPDX-License-Identifier: AGPL-3.0-only
+
 cmake_minimum_required(VERSION 3.22)
 
-project(GrainDelayRE VERSION 1.0.1)
+project(GrainDelayRE VERSION 1.0.2)
 
 include(cmake/JuceDependency.cmake)
 grain_add_juce()
 
 juce_add_plugin(GrainDelayRE
+    COMPANY_NAME "TriM"
+    COMPANY_WEBSITE "https://github.com/ZakaiMusic/GrainDelayRE"
+    BUNDLE_ID "com.yourcompany.GrainDelayRE"
     PLUGIN_MANUFACTURER_CODE ReaD
     PLUGIN_CODE Gdr1
     FORMATS VST3 Standalone
@@ -27,6 +33,9 @@ target_sources(GrainDelayRE
         Source/PluginEditor.cpp)
 
 target_compile_features(GrainDelayRE PRIVATE cxx_std_17)
+
+include(cmake/LegalNotices.cmake)
+grain_target_legal_notices(GrainDelayRE)
 
 target_compile_definitions(GrainDelayRE
     PUBLIC

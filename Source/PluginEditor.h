@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 TriM
+// SPDX-License-Identifier: AGPL-3.0-only
+
 #pragma once
 
 #include "PluginProcessor.h"
@@ -27,6 +30,7 @@ private:
     void updateRoutedControls();
     void applyXYToRoutedParameters();
     void handleManualChange(Parameters::Target target);
+    void showLegalNotices();
     Parameters::Target selectedTarget(const juce::String& id) const;
 
     GrainDelayProcessor& processor;
@@ -54,6 +58,8 @@ private:
     juce::Label xyHint;
 
     XYPad xyPad;
+    juce::TextButton aboutButton { "About / License" };
+    std::unique_ptr<juce::Component> legalPanel;
     bool xyGestureActive = false;
     bool xAxisActive = false;
     bool yAxisActive = false;

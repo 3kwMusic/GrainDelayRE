@@ -8,3 +8,7 @@
 *.ps1 text eol=crlf
 *.png binary
 *.jpg binary
+
+# Keep upstream legal texts intact, including their original whitespace.
+/LICENSE -whitespace
+/licenses/* -whitespace

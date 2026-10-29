@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 TriM
+// SPDX-License-Identifier: AGPL-3.0-only
+
 #include "GrainEngine.h"
 
 void GrainEngine::prepare(double newSampleRate, const Settings& initialSettings)

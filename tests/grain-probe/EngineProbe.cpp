@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 TriM
+// SPDX-License-Identifier: AGPL-3.0-only
+
 #include "../../Source/GrainEngine.h"
 
 #include <iostream>

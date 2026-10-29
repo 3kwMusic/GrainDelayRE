@@ -1,7 +1,27 @@
+// SPDX-FileCopyrightText: 2026 TriM
+// SPDX-License-Identifier: AGPL-3.0-only
+
 #include "../../Source/PluginProcessor.h"
 #include "../../Source/PluginEditor.h"
 #include <functional>
 #include <iostream>
+
+juce::String snapshotDirectory;
+
+void saveSnapshot(juce::Component& component, const char* name)
+{
+    if (snapshotDirectory.isEmpty())
+        return;
+
+    const juce::File directory(snapshotDirectory);
+    if (!directory.createDirectory().wasOk())
+        throw std::runtime_error("Could not create snapshot directory");
+    auto stream = directory.getChildFile(name).createOutputStream();
+    juce::PNGImageFormat format;
+    if (stream == nullptr || !format.writeImageToStream(
+            component.createComponentSnapshot(component.getLocalBounds(), true, 1.0f), *stream))
+        throw std::runtime_error("Could not save editor snapshot");
+}
 
 void setValue(GrainDelayProcessor& processor, const juce::String& id, float value)
 {
@@ -77,6 +97,39 @@ void runUiProbe()
     setValue(processor, Parameters::delayMs, 100.0f);
     setValue(processor, Parameters::syncEnabled, 1.0f);
     std::unique_ptr<juce::AudioProcessorEditor> editor(processor.createEditor());
+
+    saveSnapshot(*editor, "editor.png");
+    juce::TextButton* about = nullptr;
+    for (auto* child : editor->getChildren())
+        if (auto* button = dynamic_cast<juce::TextButton*>(child);
+            button != nullptr && button->getButtonText() == "About / License")
+            about = button;
+    if (about == nullptr || about->onClick == nullptr)
+        throw std::runtime_error("About / License control is unavailable");
+    about->onClick();
+    juce::TextEditor* legalText = nullptr;
+    juce::TextButton* closeLegal = nullptr;
+    for (auto* child : editor->getChildren())
+        if (child->isVisible())
+            for (auto* nested : child->getChildren())
+            {
+                if (auto* text = dynamic_cast<juce::TextEditor*>(nested))
+                    legalText = text;
+                if (auto* button = dynamic_cast<juce::TextButton*>(nested);
+                    button != nullptr && button->getButtonText() == "Close")
+                    closeLegal = button;
+            }
+    if (legalText == nullptr || closeLegal == nullptr
+        || !legalText->getText().contains("AGPL-3.0-only")
+        || !legalText->getText().contains("GNU AFFERO GENERAL PUBLIC LICENSE")
+        || !legalText->getText().contains("VST 3 SDK 3.7.12")
+        || !legalText->getText().contains("NO WARRANTY"))
+        throw std::runtime_error("Legal view lacks required offline notices");
+    saveSnapshot(*editor, "license.png");
+    closeLegal->onClick();
+    if (legalText->getParentComponent()->isVisible())
+        throw std::runtime_error("Legal view did not close");
+    std::cout << "offline_license_view: PASS\n";
 
     XYPad* pad = nullptr;
     juce::Slider* delaySlider = nullptr;
@@ -232,8 +285,10 @@ int runProbes()
     return 0;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+    if (argc > 1)
+        snapshotDirectory = juce::String::fromUTF8(argv[1]);
     try
     {
         return runProbes();

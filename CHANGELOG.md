@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.4
+
+- Remove workspace instructions and machine-specific paths from the source distribution.
+- Discover JUCE through an explicit path, environment variable or bundled dependency directory.
+- Preserve audio processing, parameters and plugin identifiers from 1.0.3.
+
 ## 1.0.3
 
 - Update repository, publisher website, About / License source links and release packaging links after the GitHub account rename.

@@ -1,6 +1,6 @@
 # 发布流程
 
-本流程处理源码许可、依赖说明、验证和打包，不构成对代码来源或第三方权利的法律认证。
+本流程介绍版本管理、验证和发行包的生成。
 
 ## 许可与版本
 
@@ -26,9 +26,9 @@ GitHub 自动生成的源码 ZIP 不包含 JUCE，因此发布二进制时还应
 版本信息和文件 SHA-256。脚本不自动上传、签名、安装或发布任何资产。
 
 ```powershell
-python scripts/package_release.py --juce-dir "third_party/JUCE"
+python scripts/package_release.py --juce-dir third_party/JUCE
 # 通过验证后，使用刚才测试的 Release 产物生成用户下载包：
-python scripts/package_release.py --juce-dir "third_party/JUCE" --include-binaries
+python scripts/package_release.py --juce-dir third_party/JUCE --include-binaries
 ```
 
 产物位于 `build/releases/<version>/`：
@@ -40,7 +40,7 @@ python scripts/package_release.py --juce-dir "third_party/JUCE" --include-binari
 离线复建：解压源码包，进入 `GrainDelayRE-<version>-source`，执行：
 
 ```powershell
-cmake -S . -B build -DJUCE_DIR=third_party/JUCE
+cmake -S . -B build
 cmake --build build --config Release --target GrainDelayRE_VST3 GrainDelayRE_Standalone
 ```
 

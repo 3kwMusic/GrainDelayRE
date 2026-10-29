@@ -3,8 +3,8 @@
 
 cmake_minimum_required(VERSION 3.22)
 project(GrainParameterAudit VERSION 1.0.0)
-include(../../cmake/JuceDependency.cmake)
 set(JUCE_MODULES_ONLY ON CACHE BOOL "Only JUCE modules are required for this console audit" FORCE)
+include(../../cmake/JuceDependency.cmake)
 grain_add_juce()
 add_executable(GrainParameterAudit)
 target_sources(GrainParameterAudit PRIVATE

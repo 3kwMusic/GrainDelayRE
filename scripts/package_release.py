@@ -31,17 +31,18 @@ def main():
     parser.add_argument("--build-dir", type=Path, default=ROOT / "build")
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--include-binaries", action="store_true")
+    parser.add_argument("--ref", default="HEAD", help="Tagged commit to package; defaults to HEAD")
     args = parser.parse_args()
     if args.juce_dir is None:
         parser.error("--juce-dir or the JUCE_DIR environment variable is required")
     juce = args.juce_dir.resolve(strict=True)
     if git("status", "--porcelain", "--untracked-files=no").strip():
         parser.error("Commit all tracked changes before packaging")
-    cmake = git("show", "HEAD:CMakeLists.txt").decode("utf-8")
+    commit = git("rev-parse", args.ref + "^{commit}").decode().strip()
+    cmake = git("show", commit + ":CMakeLists.txt").decode("utf-8")
     version = re.search(r"project\(GrainDelayRE VERSION ([0-9.]+)\)", cmake).group(1)
-    commit = git("rev-parse", "HEAD").decode().strip()
     expected_tag = "v" + version
-    tags = git("tag", "--points-at", "HEAD").decode().splitlines()
+    tags = git("tag", "--points-at", commit).decode().splitlines()
     if expected_tag not in tags:
         parser.error(f"Create {expected_tag} at the tested commit before packaging")
     core = (juce / "modules/juce_core/juce_core.h").read_text(encoding="utf-8")
@@ -56,12 +57,16 @@ def main():
     source_zip = out / (stem + "-source.zip")
     source_prefix = stem + "-source/"
     inventory = {"project": {}, "JUCE": {}}
-    archive = zipfile.ZipFile(io.BytesIO(git("archive", "--format=zip", "HEAD")))
+    archive = zipfile.ZipFile(io.BytesIO(git("archive", "--format=zip", commit)))
     with zipfile.ZipFile(source_zip, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as target:
         for item in archive.infolist():
             if item.is_dir():
                 continue
             content = archive.read(item)
+            if not item.filename.startswith("licenses/") and item.filename != "LICENSE":
+                text = content.decode("utf-8")
+                if re.search(r"(?i)(?<![a-z0-9])[a-z]:[\\/]|/(?:Users|home)/", text):
+                    parser.error("Project sources must not contain machine-specific absolute paths: " + item.filename)
             target.writestr(source_prefix + item.filename, content)
             inventory["project"][item.filename] = sha256(content)
         for file in sorted(juce.rglob("*")):
@@ -139,7 +144,7 @@ def main():
     (out / "SHA256SUMS.txt").write_text(sums, encoding="utf-8")
     print(sums, end="")
     print(f"Source package: {len(inventory['project'])} project files; {len(inventory['JUCE'])} JUCE files")
-    print("Archives prepared locally. No upload, installation or legal clearance was performed.")
+    print("Release archives created.")
 
 
 if __name__ == "__main__":

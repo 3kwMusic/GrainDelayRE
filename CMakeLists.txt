@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.22)
 
-project(GrainDelayRE VERSION 1.0.3)
+project(GrainDelayRE VERSION 1.0.4)
 
 include(cmake/JuceDependency.cmake)
 grain_add_juce()

@@ -27,7 +27,7 @@
 ## 构建
 
 ```powershell
-cmake -S . -B build -DJUCE_DIR="third_party/JUCE"
+cmake -S . -B build -DJUCE_DIR="<JUCE源码目录>"
 cmake --build build --config Release --target GrainDelayRE_VST3 GrainDelayRE_Standalone
 ```
 
@@ -55,14 +55,14 @@ cmake --build build/tests/parameter-probe --config Release
 
 DSP 测试覆盖相位与读头轮换、变调、分数读取、冲激延迟、干湿端点和极端参数。处理器测试覆盖音频块、Sync、XY 写回、高亮及手动优先。参数测试覆盖 Sync 目标选择和百分比文本往返。
 
-发布前使用本地 pluginval：
+安装 pluginval 后执行：
 
 ```powershell
-& pluginval --validate "build/GrainDelayRE_artefacts/Release/VST3/Grain Delay RE.vst3" --strictness-level 7 --timeout-ms 120000 --output-dir build/validation --output-filename pluginval-level7.txt
+pluginval --validate "build/GrainDelayRE_artefacts/Release/VST3/Grain Delay RE.vst3" --strictness-level 7 --timeout-ms 120000 --output-dir build/validation --output-filename pluginval-level7.txt
 ```
 
 pluginval 中独立的 Steinberg validator 需要额外配置；跳过的步骤不能记为已通过。修改布局后启动 Standalone 检查界面。
 
 ## 安装
 
-将完整 VST3 bundle 复制到宿主扫描的目录。系统目录 `%CommonProgramFiles%\VST3` 需要管理员权限。构建后先核对宿主加载文件与构建文件的 SHA-256，再进行宿主测试。
+将完整 VST3 bundle 复制到宿主扫描的目录。Windows 标准目录为 `%CommonProgramFiles%\VST3`，写入可能需要管理员权限。构建后确认宿主已扫描到新版本，再进行宿主测试。
